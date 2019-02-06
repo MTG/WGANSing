@@ -462,7 +462,7 @@ def train(_):
                 saver.save(sess, checkpoint_file, global_step=epoch)
 
 
-def synth_file(file_name = "nus_MCUR_sing_10.hdf5", singer_index = 0, file_path=config.wav_dir, show_plots=True, save_file=True):
+def synth_file(file_name = "nus_MCUR_sing_10.hdf5", singer_index = 0, file_path=config.wav_dir, show_plots=True, save_file = "GBO"):
 
 
     stat_file = h5py.File(config.stat_dir+'stats.hdf5', mode='r')
@@ -633,21 +633,6 @@ def synth_file(file_name = "nus_MCUR_sing_10.hdf5", singer_index = 0, file_path=
         # import pdb;pdb.set_trace()
         out_batches_feats_gan = utils.overlapadd(out_batches_feats_gan, nchunks_in) 
 
-    
-
-        # out_batches_feats[:,:15] = out_batches_feats[:,:15]*(max(max_feat[:15])-min(min_feat[:15]))+min(min_feat[:15])
-
-        # out_batches_feats[:,15:60] = out_batches_feats[:,15:60]*(max(max_feat[15:60])-min(min_feat[15:60]))+min(min_feat[15:60])
-
-        # out_batches_feats[:,60:] = out_batches_feats[:,60:]*(max(max_feat[60:])-min(min_feat[60:]))+min(min_feat[60:])
-
-
-        # out_batches_feats_1[:,:15] = out_batches_feats_1[:,:15]*(max(max_feat[:15])-min(min_feat[:15]))+min(min_feat[:15])
-
-        # out_batches_feats_1[:,15:60] = out_batches_feats_1[:,15:60]*(max(max_feat[15:60])-min(min_feat[15:60]))+min(min_feat[15:60])
-
-        # out_batches_feats_1[:,60:] = out_batches_feats_1[:,60:]*(max(max_feat[60:])-min(min_feat[60:]))+min(min_feat[60:])
-
 
         feats = feats *(max_feat-min_feat)+min_feat
 
@@ -677,82 +662,72 @@ def synth_file(file_name = "nus_MCUR_sing_10.hdf5", singer_index = 0, file_path=
 
         first_op = np.ascontiguousarray(first_op)
 
-        # jaja = np.concatenate((out_batches_feats[:f0.shape[0]], f0_output[:f0.shape[0]].reshape(-1,1)) ,axis=-1)
+        if show_plots:
 
-        # # import pdb;pdb.set_trace()
+            plt.figure(1)
 
-        # jaja = np.concatenate((jaja,feats[:,-1:]) ,axis=-1)
+            ax1 = plt.subplot(311)
+
+            plt.imshow(feats[:,:60].T,aspect='auto',origin='lower')
+
+            ax1.set_title("Ground Truth Vocoder Features", fontsize=10)
+
+            ax2 = plt.subplot(312, sharex = ax1, sharey = ax1)
+
+            plt.imshow(out_batches_feats[:,:60].T,aspect='auto',origin='lower')
+
+            ax2.set_title("Cross Entropy Output Vocoder Features", fontsize=10)
+
+            ax3 =plt.subplot(313, sharex = ax1, sharey = ax1)
+
+            ax3.set_title("GAN Vocoder Output Features", fontsize=10)
+
+            # plt.imshow(out_batches_feats_1[:,:60].T,aspect='auto',origin='lower')
+            #
+            # plt.subplot(414, sharex = ax1, sharey = ax1)
+
+            plt.imshow(out_batches_feats_gan[:,:60].T,aspect='auto',origin='lower')
+
+            plt.figure(2)
+
+            plt.subplot(211)
+
+            plt.imshow(feats[:,60:-2].T,aspect='auto',origin='lower')
+
+            plt.subplot(212)
+
+            plt.imshow(out_batches_feats[:,-4:].T,aspect='auto',origin='lower')
+
+            plt.show()
+
+            save_file = input("Which files to synthesise G for GAN, B for Binary Entropy, "
+                              "O for original, or any combination. Default is None").Upper() or "None"
+
+        save_file = input("Which files to synthesise G for GAN, B for Binary Entropy, "
+                          "O for original, or any combination. Default is all (GBO)").upper() or "GBO"
+
+        if "G" in save_file:
+
+            utils.feats_to_audio(gan_op[:5000,:],file_name[:-4]+'gan_op.wav')
+
+            print("GAN file saved to {}".format(os.path.join(config.val_dir,file_name[:-4]+'gan_op.wav' )))
+
+        if "O" in save_file:
+
+            utils.feats_to_audio(feats[:5000, :], file_name[:-4]+'ori_op.wav')
+
+            print("Originl file, resynthesized via WORLD vocoder saved to {}".format(os.path.join(config.val_dir, file_name[:-4] + 'ori_op.wav')))
+            #
+        if "B" in save_file:
+            # # utils.feats_to_audio(pho_op[:5000,:],file_name[:-4]+'phoop.wav')
+            #
+            utils.feats_to_audio(first_op[:5000,:],file_name[:-4]+'bce_op.wav')
+            print("Binar cross entropy file saved to {}".format(os.path.join(config.val_dir, file_name[:-4] + 'bce_op.wav')))
 
 
-        
-        # jaja = np.ascontiguousarray(jaja)
-
-        # hehe = np.concatenate((out_batches_feats[:f0.shape[0],:60], feats[:,60:]) ,axis=-1)
-        # hehe = np.ascontiguousarray(hehe)
-
-        # import pdb;pdb.set_trace()
-
-
-
-
-        # import pdb;pdb.set_trace()
-
-
-        plt.figure(1)
-
-        ax1 = plt.subplot(311)
-
-        plt.imshow(feats[:,:60].T,aspect='auto',origin='lower')
-
-        ax1.set_title("Ground Truth Vocoder Features", fontsize=10)
-
-        ax2 = plt.subplot(312, sharex = ax1, sharey = ax1)
-
-        plt.imshow(out_batches_feats[:,:60].T,aspect='auto',origin='lower')
-
-        ax2.set_title("Cross Entropy Output Vocoder Features", fontsize=10)
-        
-        ax3 =plt.subplot(313, sharex = ax1, sharey = ax1)
-
-        ax3.set_title("GAN Vocoder Output Features", fontsize=10)
-
-        # plt.imshow(out_batches_feats_1[:,:60].T,aspect='auto',origin='lower')
+        # utils.query_yes_no("Anything Else or Exit?")
         #
-        # plt.subplot(414, sharex = ax1, sharey = ax1)
-
-        plt.imshow(out_batches_feats_gan[:,:60].T,aspect='auto',origin='lower')
-
-        plt.figure(2)
-
-        plt.subplot(211)
-
-        plt.imshow(feats[:,60:-2].T,aspect='auto',origin='lower')
-
-        plt.subplot(212)
-
-        plt.imshow(out_batches_feats[:,-4:].T,aspect='auto',origin='lower')
-
-        # plt.figure(3)
-        # plt.plot(((feats[:,-2:-1]*(1-feats[:,-1:]))-69+(12*np.log2(440))-(12*np.log2(10)))*100)
-        # plt.plot(((out_batches_feats[:,-2:-1]*(1-out_batches_feats[:,-1:])) -69+(12*np.log2(440))-(12*np.log2(10)))*100)
-
-        # 
-
-
-        # plt.plot(f0_output)
-
-        plt.show()
-
-        import pdb;pdb.set_trace()
-        utils.feats_to_audio(gan_op[:5000,:],'ganop.wav')
-
-        utils.feats_to_audio(feats[:5000, :], 'ori_op.wav')
-
-        utils.feats_to_audio(pho_op[:5000,:],'phoop.wav')
-
-        utils.feats_to_audio(first_op[:5000,:],'firstop.wav')
-
-        import pdb;pdb.set_trace()
+        # import pdb;pdb.set_trace()
 
 
 
@@ -772,11 +747,15 @@ if __name__ == '__main__':
                 file_name = file_name + '.hdf5'
             if not file_name in os.listdir(config.voice_dir):
                 print("Currently only supporting hdf5 files which are in the dataset, will be expanded later.")
+            FLAG_PLOT = utils.query_yes_no("Plot plots?", default="yes")
+            # import pdb;pdb.set_trace()
+
             if len(sys.argv) < 4:
                 singer_name = file_name.split('_')[1]
                 print("Synthesizing with same singer as input file, {}, to change, please give a different singer after the song file".format(singer_name))
                 singer_index = config.singers.index(singer_name)
-                synth_file(file_name, singer_index)
+                synth_file(file_name, singer_index, show_plots = FLAG_PLOT)
+
             else:
                 singer_name = sys.argv[3]
                 if singer_name not in config.singers:
@@ -786,7 +765,7 @@ if __name__ == '__main__':
                         print(singer)
                 else:
                     singer_index = config.singers.index(singer_name)
-                    synth_file(file_name, singer_index)
+                    synth_file(file_name, singer_index, show_plots = FLAG_PLOT)
 
 
 

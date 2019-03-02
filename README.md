@@ -18,7 +18,7 @@ Once setup, you can run the followinf commands.
 To train the model: 
 <pre><code>python main.py -t</code></pre>. 
 To synthesize a .lab file:
-Use <pre><code>python main.py -s <i>filename</i> <i>alternate singer name</i> </code></pre> 
+Use <pre><code>python main.py -s <i>filename</i> <i>alternate_singer_name</i> </code></pre> 
 
 If not alternate singer is given then the original singer will be used for synthesis. A list of valid singer names will be displayed if an invalid singer is entered.
 

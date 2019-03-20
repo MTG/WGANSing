@@ -490,46 +490,38 @@ def GAN_discriminator(inputs, singer_label, phones, f0_notation):
 
     # inputs = tf.concat([inputs, conds], axis = -1)
 
-    singer_label = tf.reshape(tf.layers.dense(singer_label, config.wavenet_filters, name = "d_condi"), [config.batch_size,1,1,-1], name = "d_condi_reshape")
+    singer_label = tf.reshape(tf.layers.dense(singer_label, config.wavenet_filters, name = "g_condi"), [config.batch_size,1,1,-1], name = "g_condi_reshape")
 
-    phones = tf.layers.dense(phones, config.wavenet_filters, name = "D_phone", kernel_initializer=tf.random_normal_initializer(stddev=0.02))
+    phones = tf.layers.dense(phones, config.wavenet_filters, name = "G_phone", kernel_initializer=tf.random_normal_initializer(stddev=0.02))
 
-    f0_notation = tf.layers.dense(f0_notation, config.wavenet_filters, name = "D_f0", kernel_initializer=tf.random_normal_initializer(stddev=0.02))
+    f0_notation = tf.layers.dense(f0_notation, config.wavenet_filters, name = "G_f0", kernel_initializer=tf.random_normal_initializer(stddev=0.02))
     singer_label = tf.tile(tf.reshape(singer_label,[config.batch_size,1,-1]),[1,config.max_phr_len,1])
 
     # # conds = tf.concat([phones, f0_notation], axis = -1)
 
     # # conds = tf.layers.dense(conds, config.wavenet_filters, name = "G_conds")    
 
-    inputs = tf.concat([phones, f0_notation, singer_label, inputs], axis = -1)
+    inputs = tf.concat([phones, f0_notation, singer_label, rand], axis = -1)
 
-    prenet_out = selu(tf.layers.dense(inputs, config.lstm_size*2, name = "d_1", kernel_initializer=tf.random_normal_initializer(stddev=0.02)))
-    prenet_out = selu(tf.layers.dense(prenet_out, config.lstm_size, name = "d_2",kernel_initializer=tf.random_normal_initializer(stddev=0.02)))
-    num_block = config.wavenet_layers
-    receptive_field = 2**num_block
+    # inputs = tf.layers.dense(inputs, config.wavenet_filters, name = "G_in", kernel_initializer=tf.random_normal_initializer(stddev=0.02))
 
-    first_conv = tf.layers.conv1d(prenet_out, config.wavenet_filters, 1, name = "d_3")
-    skips = []
-    skip, residual = nr_wavenet_block(first_conv, dilation_rate=1, name = "nr_wavenet_block_0")
-    output = skip
-    for i in range(num_block):
-        skip, residual = nr_wavenet_block(residual, dilation_rate=2**(i+1), name = "nr_wavenet_block_"+str(i+1))
-        skips.append(skip)
-    for skip in skips:
-        output+=skip
-    output = output+first_conv
+    inputs = tf.reshape(inputs, [config.batch_size, config.max_phr_len, 1, -1])
 
-    output = tf.nn.relu(output)
+    # rand = tf.layers.dense(rand, config.wavenet_filters, name = "G_rand", kernel_initializer=tf.random_normal_initializer(stddev=0.02))
 
-    output = tf.layers.conv1d(output,config.wavenet_filters,1, kernel_initializer=tf.random_normal_initializer(stddev=0.02), name = "d_4")
+    conv1 =  tf.nn.relu(tf.layers.conv2d(inputs, 32, (3,1), strides=(2,1),  padding = 'same', name = "G_1", kernel_initializer=tf.random_normal_initializer(stddev=0.02)))
 
-    output = selu(output)
+    conv5 =  tf.nn.relu(tf.layers.conv2d(conv1, 64, (3,1), strides=(2,1),  padding = 'same', name = "G_5", kernel_initializer=tf.random_normal_initializer(stddev=0.02)))
+    # import pdb;pdb.set_trace()
 
-    output = tf.layers.conv1d(output,1,1, kernel_initializer=tf.random_normal_initializer(stddev=0.02), name = "d_5")
+    conv6 =  tf.nn.relu(tf.layers.conv2d(conv5, 128, (3,1), strides=(2,1),  padding = 'same', name = "G_6", kernel_initializer=tf.random_normal_initializer(stddev=0.02)))
 
-    output = selu(output)
+    conv7 = tf.nn.relu(tf.layers.conv2d(conv6, 256, (3,1), strides=(2,1),  padding = 'same', name = "G_7", kernel_initializer=tf.random_normal_initializer(stddev=0.02)))
 
-    return output
+    conv8 = tf.nn.relu(tf.layers.conv2d(conv7, 512, (3,1), strides=(2,1),  padding = 'same', name = "G_8", kernel_initializer=tf.random_normal_initializer(stddev=0.02)))
+
+
+    return conv8
 
 # def GAN_discriminator(inputs, conds):
 #     # singer_label = tf.reshape(tf.layers.dense(singer_label, config.wavenet_filters, name = "d_condi"), [config.batch_size,1,1,-1], name = "d_condi_reshape")

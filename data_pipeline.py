@@ -35,7 +35,7 @@ def data_gen(mode = 'Train', sec_mode = 0):
 
     voc_list = [x for x in os.listdir(config.voice_dir) if
                 x.endswith('.hdf5') and x.startswith('nus') and not x == 'nus_MCUR_sing_04.hdf5' and not x == 'nus_ADIZ_read_01.hdf5'
-                and not x == 'nus_JLEE_sing_05.hdf5' and not x == 'nus_JTAN_read_07.hdf5' and not x.startswith('nus_KENN_read')]
+                and not x == 'nus_JLEE_sing_05.hdf5' and not x == 'nus_JTAN_read_07.hdf5']
                 # and not x == 'nus_MPOL_read_11.hdf5' and not x == 'nus_MPUR_sing_16.hdf5'
                     # 'nus_KENN') and not x == 'nus_MCUR_sing_04.hdf5' and not x == 'nus_MCUR_read_04.hdf5']
 

@@ -14,9 +14,11 @@ wav_dir_vctk_lab = '../datasets/VCTK/VCTK_files/VCTK-Corpus/forPritish/'
 voice_dir = '../ss_synthesis/voice/'
 backing_dir = './backing/'
 
-# log_dir = '../ss_synthesis/log_Wassertien1_L1_vs_imagegan_NN/'
+log_dir = '../ss_synthesis/log_Wassertien1_L1_vs_imagegan_NN/'
 
-log_dir = '../ss_synthesis//log_cross_GANandL1/'
+# log_dir = '../ss_synthesis/log_cross_GANandL1/'
+
+# log_dir = '../ss_synthesis/logL1_and_Gan_l1/'
 
 
 # log_dir = './log/'

@@ -18,6 +18,7 @@ from data_pipeline import data_gen
 import modules_tf as modules
 import utils
 from reduce import mgc_to_mfsc
+import models
 
 def one_hotize(inp, max_index=41):
     # output = np.zeros((inp.shape[0],inp.shape[1],max_index))
@@ -199,13 +200,11 @@ def train(_):
 
         gen_acc_summary = tf.summary.scalar('gen_acc', G_accuracy)
 
-        reconstruct_loss = tf.reduce_sum(tf.nn.sigmoid_cross_entropy_with_logits(labels= output_placeholder, logits=voc_output)) \
+        final_loss = tf.reduce_sum(tf.nn.sigmoid_cross_entropy_with_logits(labels= output_placeholder, logits=voc_output)) \
                            # +tf.reduce_sum(tf.nn.sigmoid_cross_entropy_with_logits(labels= output_placeholder, logits=voc_output_3))*0.5
 
         # reconstruct_loss = tf.reduce_sum(tf.abs(output_placeholder- (voc_output_2/2+0.5)))
 
-   
-        final_loss = reconstruct_loss
 
         final_summary = tf.summary.scalar('final_loss', final_loss)
 
@@ -563,6 +562,10 @@ def synth_file(file_name = "nus_MCUR_sing_10.hdf5", singer_index = 0, file_path=
 
         f0[f0==0] = med
 
+        f0 = f0-12
+
+        feats[:,-2] = feats[:,-2] -12
+
 
         f0_nor = (f0 - min_feat[-2])/(max_feat[-2]-min_feat[-2])
 
@@ -601,7 +604,7 @@ def synth_file(file_name = "nus_MCUR_sing_10.hdf5", singer_index = 0, file_path=
 
             in_batch_pho_target = in_batch_pho_target.reshape([config.batch_size, config.max_phr_len])
 
-            in_batch_pho_target = sess.run(pho_probs, feed_dict = {input_placeholder: in_batch_feat})
+            # in_batch_pho_target = sess.run(pho_probs, feed_dict = {input_placeholder: in_batch_feat})
 
             output_feats, output_feats_1, output_feats_gan = sess.run([voc_output_decoded,voc_output_3_decoded,voc_output_2], feed_dict = {input_placeholder: in_batch_feat,
               f0_input_placeholder: in_batch_f0,phoneme_labels_2:in_batch_pho_target, singer_labels: np.ones(30)*singer_index, rand_input_placeholder: np.random.normal(-1.0,1.0,size=[30,config.max_phr_len,4])})
@@ -701,27 +704,28 @@ def synth_file(file_name = "nus_MCUR_sing_10.hdf5", singer_index = 0, file_path=
             plt.show()
 
             save_file = input("Which files to synthesise G for GAN, B for Binary Entropy, "
-                              "O for original, or any combination. Default is None").Upper() or "None"
+                              "O for original, or any combination. Default is None").upper() or "N"
 
-        save_file = input("Which files to synthesise G for GAN, B for Binary Entropy, "
+        else:
+            save_file = input("Which files to synthesise G for GAN, B for Binary Entropy, "
                           "O for original, or any combination. Default is all (GBO)").upper() or "GBO"
 
         if "G" in save_file:
 
-            utils.feats_to_audio(gan_op[:5000,:],file_name[:-4]+'gan_op.wav')
+            utils.feats_to_audio(gan_op[:,:],file_name[:-4]+'gan_op.wav')
 
             print("GAN file saved to {}".format(os.path.join(config.val_dir,file_name[:-4]+'gan_op.wav' )))
 
         if "O" in save_file:
 
-            utils.feats_to_audio(feats[:5000, :], file_name[:-4]+'ori_op.wav')
+            utils.feats_to_audio(feats[:, :], file_name[:-4]+'ori_op.wav')
 
             print("Originl file, resynthesized via WORLD vocoder saved to {}".format(os.path.join(config.val_dir, file_name[:-4] + 'ori_op.wav')))
             #
         if "B" in save_file:
             # # utils.feats_to_audio(pho_op[:5000,:],file_name[:-4]+'phoop.wav')
             #
-            utils.feats_to_audio(first_op[:5000,:],file_name[:-4]+'bce_op.wav')
+            utils.feats_to_audio(first_op[:,:],file_name[:-4]+'bce_op.wav')
             print("Binar cross entropy file saved to {}".format(os.path.join(config.val_dir, file_name[:-4] + 'bce_op.wav')))
 
 
@@ -735,6 +739,9 @@ def synth_file(file_name = "nus_MCUR_sing_10.hdf5", singer_index = 0, file_path=
 
 
 if __name__ == '__main__':
+    if '-l' in sys.argv:
+        index_log = sys.argv.index('-l')
+        import pdb;pdb.set_trace()
     if sys.argv[1] == '-train' or sys.argv[1] == '--train' or sys.argv[1] == '--t' or sys.argv[1] == '-t':
         print("Training")
         tf.app.run(main=train)
@@ -766,6 +773,7 @@ if __name__ == '__main__':
                 else:
                     singer_index = config.singers.index(singer_name)
                     synth_file(file_name, singer_index, show_plots = FLAG_PLOT)
+
 
 
 

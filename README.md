@@ -6,7 +6,7 @@
 
 This repository contains the source code for multi-voice singing voice synthesis
 <h3>Installation</h3>
-To install, clone the repository and use <pre><code>pip install requirements.txt </code></pre> to install the packages required.
+To install, clone the repository and use <pre><code>pip install -r requirements.txt </code></pre> to install the packages required.
 
  The main code is in the *main.py* file.  
  

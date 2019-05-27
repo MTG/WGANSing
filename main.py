@@ -498,7 +498,7 @@ def synth_file(file_name = "nus_MCUR_sing_10.hdf5", singer_index = 0, file_path=
             pho_probs = tf.nn.softmax(pho_logits)
 
         with tf.variable_scope('Final_Model') as scope:
-            voc_output = modules.final_net(singer_onehot_labels, f0_input_placeholder, phoneme_labels_2)
+            voc_output = modules.final_net(singer_onehot_labels, f0_input_placeholder, phone_onehot_labels)
             voc_output_decoded = tf.nn.sigmoid(voc_output)
             scope.reuse_variables()
             voc_output_3 = modules.final_net(singer_onehot_labels, f0_input_placeholder, pho_probs)
@@ -516,11 +516,11 @@ def synth_file(file_name = "nus_MCUR_sing_10.hdf5", singer_index = 0, file_path=
 
 
         with tf.variable_scope('Generator') as scope: 
-            voc_output_2 = modules.GAN_generator(singer_onehot_labels, phoneme_labels_2, f0_input_placeholder, rand_input_placeholder)
+            voc_output_2 = modules.GAN_generator(singer_onehot_labels, phone_onehot_labels, f0_input_placeholder, rand_input_placeholder)
 
 
-        with tf.variable_scope('Discriminator') as scope: 
-            D_fake = modules.GAN_discriminator(voc_output_2,singer_onehot_labels, phone_onehot_labels, f0_input_placeholder)
+        # with tf.variable_scope('Discriminator') as scope: 
+        #     D_fake = modules.GAN_discriminator(voc_output_2,singer_onehot_labels, phone_onehot_labels, f0_input_placeholder)
 
 
         saver = tf.train.Saver(max_to_keep= config.max_models_to_keep)
@@ -607,7 +607,7 @@ def synth_file(file_name = "nus_MCUR_sing_10.hdf5", singer_index = 0, file_path=
             # in_batch_pho_target = sess.run(pho_probs, feed_dict = {input_placeholder: in_batch_feat})
 
             output_feats, output_feats_1, output_feats_gan = sess.run([voc_output_decoded,voc_output_3_decoded,voc_output_2], feed_dict = {input_placeholder: in_batch_feat,
-              f0_input_placeholder: in_batch_f0,phoneme_labels_2:in_batch_pho_target, singer_labels: np.ones(30)*singer_index, rand_input_placeholder: np.random.normal(-1.0,1.0,size=[30,config.max_phr_len,4])})
+              f0_input_placeholder: in_batch_f0,phoneme_labels :in_batch_pho_target, singer_labels: np.ones(30)*singer_index, rand_input_placeholder: np.random.normal(-1.0,1.0,size=[30,config.max_phr_len,4])})
 
 
             out_batches_feats.append(output_feats)

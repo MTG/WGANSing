@@ -9,7 +9,7 @@ import pyworld as pw
 import matplotlib.pyplot as plt
 from reduce import sp_to_mfsc, mfsc_to_sp, ap_to_wbap,wbap_to_ap, get_warped_freqs, sp_to_mgc, mgc_to_sp, mgc_to_mfsc, mfsc_to_mgc
 from vocoder import extract_sp_world, extract_ap_world, gen_wave_world
-from acoufe import pitch
+# from acoufe import pitch
 import librosa
 from tqdm import tqdm
 
@@ -259,7 +259,10 @@ def stft_to_feats(vocals, fs, mode=config.comp_mode):
     ap = feats[2].reshape([feats[1].shape[0],feats[1].shape[1]]).astype(np.float32)
     ap = 10.*np.log10(ap**2)
     harm=10*np.log10(feats[1].reshape([feats[2].shape[0],feats[2].shape[1]]))
-    f0 = pitch.extract_f0_sac(vocals, fs, 0.00580498866)
+    feats=pw.wav2world(vocals,fs,frame_period=5.80498866)
+
+    f0 = feats[0]
+    # f0 = pitch.extract_f0_sac(vocals, fs, 0.00580498866)
 
     y=69+12*np.log2(f0/440)
     # import pdb;pdb.set_trace()
@@ -309,7 +312,10 @@ def write_ori_med(input_file, filename):
 def file_to_sac(input_file):
     audio,fs = sf.read(input_file)
     vocals = np.array(audio[:,1])
-    f0 = pitch.extract_f0_sac(vocals, config.fs, 0.00580498866)
+    feats=pw.wav2world(vocals,fs,frame_period=5.80498866)
+
+    f0 = feats[0]
+    # f0 = pitch.extract_f0_sac(vocals, config.fs, 0.00580498866)
     y=69+12*np.log2(f0/440)
     # y = hertz_to_new_base(f0)
     nans, x= nan_helper(y)

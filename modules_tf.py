@@ -501,7 +501,7 @@ def GAN_discriminator(inputs, singer_label, phones, f0_notation):
 
     # # conds = tf.layers.dense(conds, config.wavenet_filters, name = "G_conds")    
 
-    inputs = tf.concat([phones, f0_notation, singer_label, rand], axis = -1)
+    inputs = tf.concat([phones, f0_notation, singer_label], axis = -1)
 
     # inputs = tf.layers.dense(inputs, config.wavenet_filters, name = "G_in", kernel_initializer=tf.random_normal_initializer(stddev=0.02))
 
@@ -519,6 +519,7 @@ def GAN_discriminator(inputs, singer_label, phones, f0_notation):
     conv7 = tf.nn.relu(tf.layers.conv2d(conv6, 256, (3,1), strides=(2,1),  padding = 'same', name = "G_7", kernel_initializer=tf.random_normal_initializer(stddev=0.02)))
 
     conv8 = tf.nn.relu(tf.layers.conv2d(conv7, 512, (3,1), strides=(2,1),  padding = 'same', name = "G_8", kernel_initializer=tf.random_normal_initializer(stddev=0.02)))
+
 
 
     return conv8

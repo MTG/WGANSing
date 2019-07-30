@@ -97,7 +97,7 @@ noise_threshold = 0.4 #0.7 for the unnormalized features
 pred_mode = 'all'
 
 # Hyperparameters
-num_epochs = 2500
+num_epochs = 950
 
 batches_per_epoch_train = 100
 batches_per_epoch_val = 10

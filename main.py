@@ -47,7 +47,9 @@ if __name__ == '__main__':
                         singer_index = config.singers.index(singer_name)
                         eval_hdf5_file(file_name, singer_index)
                     else:
-                        singer_index = sys.argv[3]
-                        assert singer_index>=0 and singer_index<config.num_singers, "Please give a number between 0 and {}".format(config.num_singers)
+                        singer_name = sys.argv[3].upper()
+                        assert singer_name in config.singers, "Please give a singer from the NUS dataset {}".format(config.singers)
+                        singer_index = config.singers.index(singer_name)
+                        
                         print("Synthesizing second singer.")
                         eval_hdf5_file(file_name, singer_index)

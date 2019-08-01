@@ -40,7 +40,7 @@ def decoder_conv_block_gan(inputs, layer, layer_num, is_train, num_filters = con
 
     # embedding = tf.tile(embedding,[1,int(config.max_phr_len/2**(config.encoder_layers - 1 - layer_num)),1,1])
 
-    deconv = tf.layers.batch_normalization( tf.nn.relu(tf.layers.conv2d(deconv, layer.shape[-1]
+    deconv = tf.layers.batch_normalization(tf.nn.relu(tf.layers.conv2d(deconv, layer.shape[-1]
         , (config.filter_len,1), strides=(1,1),  padding = 'same', name =  "D_"+str(layer_num), kernel_initializer=tf.random_normal_initializer(stddev=0.02))), training = is_train, name =  "DBN_"+str(layer_num))
 
     # embedding =tf.nn.relu(tf.layers.conv2d(embedding, layer.shape[-1]

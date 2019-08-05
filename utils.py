@@ -540,6 +540,21 @@ def query_yes_no(question, default="yes"):
             sys.stdout.write("Please respond with 'yes' or 'no' "
                              "(or 'y' or 'n').\n")
 
+
+def match_time(feat_list):
+    """ 
+    Matches the shape across the time dimension of a list of arrays.
+    Assumes that the first dimension is in time, preserves the other dimensions
+    """
+    shapes = [f.shape for f in feat_list]
+    shapes_equal = [s == shapes[0] for s in shapes]
+    if not all(shapes_equal):
+        min_time = np.min([s[0] for s in shapes])
+        new_list = []
+        for i in range(len(feat_list)):
+            new_list.append(feat_list[i][:min_time])
+        feat_list = new_list
+    return feat_list
 def main():
     out_feats = input_to_feats(config.wav_dir+'10161_chorus.wav')
     feats_to_audio(out_feats, 'test')

@@ -84,7 +84,7 @@ def main():
 
                 hdf5_file.create_dataset("phonemes", [voc_stft.shape[0]], int)
 
-            hdf5_file["phonemes"][:,] = strings_p
+            hdf5_file["phonemes"][:,] = strings_p[:,0]
 
             hdf5_file.create_dataset("voc_stft", voc_stft.shape, np.float32)
 
@@ -132,7 +132,7 @@ def main():
 
                 hdf5_file.create_dataset("phonemes", [voc_stft.shape[0]], int)
 
-            hdf5_file["phonemes"][:,] = strings_p
+            hdf5_file["phonemes"][:,] = strings_p[:,0]
 
             hdf5_file.create_dataset("voc_stft", voc_stft.shape, np.float32)
 

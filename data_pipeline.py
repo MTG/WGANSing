@@ -138,8 +138,6 @@ def data_gen(mode = 'Train', sec_mode = 0):
 def get_stats():
     voc_list = [x for x in os.listdir(config.voice_dir) if x.endswith('.hdf5') and x.startswith('nus')  and not x.startswith('nus_KENN') ]
 
-    back_list = [x for x in os.listdir(config.backing_dir) if x.endswith('.hdf5') and not x.startswith('._') and not x.startswith('mir') and not x.startswith('med')]
-
     max_feat = np.zeros(66)
     min_feat = np.ones(66)*1000
 

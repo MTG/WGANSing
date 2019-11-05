@@ -15,7 +15,7 @@ scipy==1.1.0
 SoundFile==0.10.1
 
 tensorboard==1.15.0
-tensorflow==1.15.0
+tensorflow==2.0.0
 tensorflow-gpu==1.15
 tensorflow-tensorboard==1.5.1
 

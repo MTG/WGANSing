@@ -14,10 +14,9 @@ scipy==1.1.0
 
 SoundFile==0.10.1
 
-tensorboard==1.12.0
-tensorflow==1.12.0
-tensorflow-gpu==1.12.0
+tensorboard==1.15.0
+tensorflow==1.15.0
+tensorflow-gpu==1.15
 tensorflow-tensorboard==1.5.1
 
-utf8-interpy==1.0
-vamp==1.1.0
+

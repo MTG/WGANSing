@@ -18,7 +18,7 @@ To install, clone the repository and use <pre><code>pip install -r requirements.
 
 To use the WGANSing, you will have to download the <a href="https://drive.google.com/file/d/1Mmg3cq5CYl-yOePHhiFWInizlr3tMPEE/view?usp=sharing" rel="nofollow"> model weights</a> and place it in the *log_dir* directory, defined in *config.py*. 
 
-The NUS-48E dataset can be downloaded from <a href="https://www.smcnus.org/nus-48e-sung-and-spoken-lyrics-corpus/" rel="nofollow"> here</a>. Once downloaded, please change *wav_dir_nus* in *config.py* to the same directory that the dataset is in. 
+The NUS-48E dataset can be downloaded from <a href="https://smcnus.comp.nus.edu.sg/nus-48e-sung-and-spoken-lyrics-corpus/" rel="nofollow"> here</a>. Once downloaded, please change *wav_dir_nus* in *config.py* to the same directory that the dataset is in. 
 
 To prepare the data for use, please use *prep_data_nus.py*.
 

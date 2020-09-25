@@ -17,5 +17,5 @@ SoundFile==0.10.1
 tensorflow-tensorboard==1.5.1
 tensorboard==1.15.0
 tensorflow==1.15.2
-tensorflow-gpu==1.15
+tensorflow-gpu==1.15.4
 

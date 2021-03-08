@@ -118,7 +118,7 @@ class WGANSing(Model):
 
 
 
-        self.final_loss = tf.reduce_sum(tf.abs(self.output_placeholder- (self.output/2+0.5)))/(config.batch_size*config.max_phr_len*64) + tf.reduce_mean(self.D_fake+1e-12)
+        self.final_loss = tf.reduce_sum(tf.abs(self.output_placeholder- (self.output/2+0.5)))/(config.batch_size*config.max_phr_len*64) * config.lambda + tf.reduce_mean(self.D_fake+1e-12)
 
         self.D_loss = tf.reduce_mean(self.D_real +1e-12) - tf.reduce_mean(self.D_fake+1e-12)
 

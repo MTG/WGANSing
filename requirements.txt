@@ -5,7 +5,7 @@ librosa==0.6.2
 
 mir-eval==0.4
 
-numpy==1.15.4
+numpy==1.22.0
 pandas==0.20.3
 
 -e git+https://github.com/JeremyCCHsu/Python-Wrapper-for-World-Vocoder.git@a34a99980fc82825c0f2b616ea85069a4411cc94#egg=pyworld
